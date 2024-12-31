@@ -13,7 +13,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en">
       <body className=" m-auto grid bg-gradient-to-r from-slate-900 to-slate-700 px-4 font-sans ">
-        <main className=" text-white">{children}</main>
+        <main className=" flex justify-center text-white">{children}</main>
       </body>
     </html>
   );
