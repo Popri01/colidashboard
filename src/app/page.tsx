@@ -52,6 +52,7 @@ export default function HomePage() {
   useEffect(() => {
     swapyRef.current = createSwapy(containerRef.current!, {
       manualSwap: true,
+      enabled: estado,
     });
 
     swapyRef.current.onSwap((event) => {
@@ -117,7 +118,8 @@ export default function HomePage() {
                 <span
                   data-swapy-no-drag
                   className="absolute right-2 top-2 cursor-pointer rounded-full bg-red-500 p-1 text-white hover:bg-red-700"
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation();
                     setItems(items.filter((i) => i.id !== item.id));
                   }}
                 >
@@ -126,7 +128,8 @@ export default function HomePage() {
                 <span
                   data-swapy-no-drag
                   className="absolute left-2 top-2 cursor-pointer rounded-full bg-yellow-500 p-1 text-white hover:bg-yellow-700"
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation();
                     setEditItemId(item.id);
                     setEditTitle(item.title);
                     setEditLink(item.link);
