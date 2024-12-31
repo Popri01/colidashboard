@@ -2,7 +2,7 @@
 
 import {useEffect, useMemo, useRef, useState} from "react";
 import {SlotItemMapArray, utils, Swapy, createSwapy} from "swapy";
-import {Plus, Trash2} from "lucide-react";
+import {Plus, Trash2, Edit3} from "lucide-react";
 import {Dialog} from "@headlessui/react";
 
 type Item = {
@@ -26,8 +26,12 @@ export default function HomePage() {
     utils.initSlotItemMap(items, "id"),
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newLink, setNewLink] = useState("");
+  const [editItemId, setEditItemId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editLink, setEditLink] = useState("");
 
   const slottedItems = useMemo(
     () => utils.toSlottedItems(items, "id", slotItemMap),
@@ -68,6 +72,20 @@ export default function HomePage() {
     }
   };
 
+  const handleEditItem = () => {
+    if (editItemId && editTitle.trim() && editLink.trim()) {
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === editItemId ? {...item, title: editTitle, link: editLink} : item,
+        ),
+      );
+      setEditItemId(null);
+      setEditTitle("");
+      setEditLink("");
+      setIsEditModalOpen(false);
+    }
+  };
+
   return (
     <div
       ref={containerRef}
@@ -98,6 +116,18 @@ export default function HomePage() {
                   }}
                 >
                   <Trash2 size={16} />
+                </span>
+                <span
+                  data-swapy-no-drag
+                  className="absolute left-2 top-2 cursor-pointer rounded-full bg-yellow-500 p-1 text-white hover:bg-yellow-700"
+                  onClick={() => {
+                    setEditItemId(item.id);
+                    setEditTitle(item.title);
+                    setEditLink(item.link);
+                    setIsEditModalOpen(true);
+                  }}
+                >
+                  <Edit3 size={16} />
                 </span>
               </div>
             ) : null}
@@ -169,6 +199,56 @@ export default function HomePage() {
               onClick={handleAddItem}
             >
               Add
+            </button>
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        open={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      >
+        <div className="w-96 rounded-lg bg-white p-6 shadow-lg">
+          <h2 className="mb-4 text-lg font-semibold">Edit Item</h2>
+          <div className="mb-4">
+            <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="edit-title">
+              Title
+            </label>
+            <input
+              className="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              id="edit-title"
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="edit-link">
+              Link
+            </label>
+            <input
+              className="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              id="edit-link"
+              type="url"
+              value={editLink}
+              onChange={(e) => setEditLink(e.target.value)}
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              className="rounded-lg bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400"
+              type="button"
+              onClick={() => setIsEditModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+              type="button"
+              onClick={handleEditItem}
+            >
+              Save
             </button>
           </div>
         </div>
