@@ -16,14 +16,10 @@ const initialItems: Item[] = [
   {id: "3", title: "Ejemplo 3", link: "https://www.google.com"},
 ];
 
-const getInitialItems = (): Item[] => {
-  const savedItems = localStorage.getItem("items");
-
-  return savedItems ? JSON.parse(savedItems) : initialItems;
-};
-
 export default function HomePage() {
-  const [items, setItems] = useState<Item[]>(getInitialItems());
+  const [items, setItems] = useState<Item[]>(() =>
+    localStorage.getItem("items") ? JSON.parse(localStorage.getItem("items")!) : initialItems,
+  );
   const [estado, setEstado] = useState<boolean>(false);
   const [slotItemMap, setSlotItemMap] = useState<SlotItemMapArray>(
     utils.initSlotItemMap(items, "id"),
