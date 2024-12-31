@@ -10,18 +10,21 @@ type Item = {
   title: string;
   link: string;
 };
-
 const initialItems: Item[] = [
-  {id: "1", title: "1", link: "https://www.google.com"},
-  {id: "2", title: "2", link: "https://www.google.com"},
-  {id: "3", title: "3", link: "https://www.google.com"},
+  {id: "1", title: "Ejemplo 1", link: "https://www.google.com"},
+  {id: "2", title: "Ejemplo 2", link: "https://www.google.com"},
+  {id: "3", title: "Ejemplo 3", link: "https://www.google.com"},
 ];
 
-let id = 4;
+const getInitialItems = (): Item[] => {
+  const savedItems = localStorage.getItem("items");
+
+  return savedItems ? JSON.parse(savedItems) : initialItems;
+};
 
 export default function HomePage() {
-  const [items, setItems] = useState<Item[]>(initialItems);
-  const [estado, setEstado] = useState<boolean>(true);
+  const [items, setItems] = useState<Item[]>(getInitialItems());
+  const [estado, setEstado] = useState<boolean>(false);
   const [slotItemMap, setSlotItemMap] = useState<SlotItemMapArray>(
     utils.initSlotItemMap(items, "id"),
   );
@@ -60,12 +63,15 @@ export default function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("items", JSON.stringify(items));
+  }, [items]);
+
   const handleAddItem = () => {
     if (newTitle.trim() && newLink.trim()) {
-      const newItem: Item = {id: `${id}`, title: newTitle, link: newLink};
+      const newItem: Item = {id: `${Date.now()}`, title: newTitle, link: newLink};
 
       setItems([...items, newItem]);
-      id++;
       setNewTitle("");
       setNewLink("");
       setIsModalOpen(false);
@@ -153,7 +159,6 @@ export default function HomePage() {
           {estado ? "Desactivar Movimiento " : "Activar Movimiento"}
         </button>
       </div>
-
       <Dialog
         className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
         open={isModalOpen}
