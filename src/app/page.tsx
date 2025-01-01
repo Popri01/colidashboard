@@ -17,7 +17,9 @@ const initialItems: Item[] = [
 ];
 
 export default function HomePage() {
-  const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState<Item[]>(() =>
+    localStorage.getItem("items") ? JSON.parse(localStorage.getItem("items")!) : initialItems,
+  );
   const [estado, setEstado] = useState<boolean>(false);
   const [slotItemMap, setSlotItemMap] = useState<SlotItemMapArray>(
     utils.initSlotItemMap(items, "id"),
@@ -48,10 +50,6 @@ export default function HomePage() {
       manualSwap: true,
       enabled: estado,
     });
-
-    setItems(() =>
-      localStorage.getItem("items") ? JSON.parse(localStorage.getItem("items")!) : initialItems,
-    );
 
     swapyRef.current.onSwap((event) => {
       setSlotItemMap(event.newSlotItemMap.asArray);
