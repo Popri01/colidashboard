@@ -22,8 +22,8 @@ export default function App() {
     localStorage.getItem("items") ? JSON.parse(localStorage.getItem("items")!) : initialItems,
   );
   const [estado, setEstado] = useState<boolean>(false);
-  const [slotItemMap, setSlotItemMap] = useState<SlotItemMapArray>(
-    utils.initSlotItemMap(items, "id"),
+  const [slotItemMap, setSlotItemMap] = useState<SlotItemMapArray>(() =>
+    localStorage.getItem("ubicacion") ? JSON.parse(localStorage.getItem("ubicacion")!) : utils.initSlotItemMap(items, "id")
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -54,6 +54,8 @@ export default function App() {
 
     swapyRef.current.onSwap((event) => {
       setSlotItemMap(event.newSlotItemMap.asArray);
+      
+      localStorage.setItem("ubicacion", JSON.stringify(event.newSlotItemMap.asArray));
     });
 
     return () => {
@@ -63,12 +65,14 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem("items", JSON.stringify(items));
+   
   }, [items]);
+
+
 
   const handleAddItem = () => {
     if (newTitle.trim() && newLink.trim()) {
       const newItem: Item = {id: `${Date.now()}`, title: newTitle, link: newLink};
-
       setItems([...items, newItem]);
       setNewTitle("");
       setNewLink("");
@@ -94,7 +98,7 @@ export default function App() {
 
     <div
       ref={containerRef}
-      className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-gray-900 p-4 shadow-lg"
+      className="flex w-full h-full max-w-md flex-col gap-4 rounded-lg bg-gray-900 p-4 shadow-lg"
     >
       <div className="grid grid-cols-3 gap-2">
         {slottedItems.map(({slotId, itemId, item}) => (
@@ -143,7 +147,7 @@ export default function App() {
       </div>
       <div>
         <button
-          className="mt-4 flex h-12 w-full items-center justify-center rounded-lg bg-blue-500 text-lg font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="mt-4  flex h-12 w-full items-center justify-center rounded-lg bg-blue-500 text-lg font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
           type="button"
           onClick={() => setIsModalOpen(true)}
         >
@@ -165,14 +169,14 @@ export default function App() {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       >
-        <div className="w-96 rounded-lg bg-white p-6 shadow-lg">
+        <div className="w-96 text-black rounded-lg bg-white p-6 shadow-lg">
           <h2 className="mb-4 text-lg font-semibold">Add New Item</h2>
           <div className="mb-4">
             <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="title">
               Title
             </label>
             <input
-              className="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full text-black rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               id="title"
               type="text"
               value={newTitle}
@@ -184,7 +188,7 @@ export default function App() {
               Link
             </label>
             <input
-              className="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full text-black rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               id="link"
               type="url"
               value={newLink}
@@ -215,14 +219,14 @@ export default function App() {
         open={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
       >
-        <div className="w-96 rounded-lg bg-white p-6 shadow-lg">
+        <div className="w-96 text-black rounded-lg bg-white p-6 shadow-lg">
           <h2 className="mb-4 text-lg font-semibold">Edit Item</h2>
           <div className="mb-4">
             <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="edit-title">
               Title
             </label>
             <input
-              className="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full text-black rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               id="edit-title"
               type="text"
               value={editTitle}
@@ -234,7 +238,7 @@ export default function App() {
               Link
             </label>
             <input
-              className="w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full  text-black rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               id="edit-link"
               type="url"
               value={editLink}
